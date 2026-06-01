@@ -5,9 +5,11 @@ import { Box, Typography, Paper, Divider, Chip } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useContextStore } from "../../store/contextStore";
+import { useChatStore } from "../../store/chatStore";
 
 export default function ConversationSidebar() {
   const fileName = useContextStore((state) => state.fileName);
+  const summary = useChatStore((state) => state.summary);
 
   return (
     <Paper
@@ -15,6 +17,8 @@ export default function ConversationSidebar() {
         height: "100vh",
         p: 2,
         borderRadius: 0,
+        maxHeight:"100vh",
+        overflow:"scroll"
       }}
     >
       <Typography variant="h5" gutterBottom>
@@ -46,6 +50,19 @@ export default function ConversationSidebar() {
         <Typography variant="body2" color="text.secondary">
           {fileName ? "Ready for Q&A" : "Upload a TXT file"}
         </Typography>
+        {summary && (
+          <>
+            <Divider sx={{ my: 3 }} />
+
+            <Typography variant="h6" gutterBottom>
+              Summary
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary">
+              {summary}
+            </Typography>
+          </>
+        )}
       </Box>
 
       <Divider sx={{ my: 3 }} />
@@ -61,11 +78,10 @@ export default function ConversationSidebar() {
           sx={{
             mb: 1,
             "& .MuiChip-icon": {
-              color: "#DFB722", 
+              color: "#DFB722",
             },
             background: "#fff",
             border: "1px solid #877f7fff",
-
           }}
         />
       </Box>
@@ -77,25 +93,27 @@ export default function ConversationSidebar() {
           sx={{
             mb: 1,
             "& .MuiChip-icon": {
-              color: "#DFB722", 
+              color: "#DFB722",
             },
             background: "#fff",
             border: "1px solid #877f7fff",
-
           }}
         />
       </Box>
 
       <Box>
-        <Chip icon={<AutoAwesomeIcon />} label="AI Pipeline"  sx={{
+        <Chip
+          icon={<AutoAwesomeIcon />}
+          label="AI Pipeline"
+          sx={{
             mb: 1,
             "& .MuiChip-icon": {
-              color: "#DFB722", 
+              color: "#DFB722",
             },
             background: "#fff",
             border: "1px solid #877f7fff",
-
-          }} />
+          }}
+        />
       </Box>
 
       <Divider sx={{ my: 3 }} />

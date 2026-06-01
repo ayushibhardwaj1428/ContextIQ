@@ -6,6 +6,7 @@ import ChatInput from "../ChatInput/ChatInput";
 import { useContextStore } from "../../store/contextStore";
 import ReactMarkdown from "react-markdown";
 import { useEffect, useRef } from "react";
+import ContextUpload from "../ContextUpload/ContextUpload";
 
 export default function ChatWindow() {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -34,7 +35,7 @@ export default function ChatWindow() {
       <Typography variant="h5" gutterBottom>
         Context-Aware Chat
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" color="text.secondary" sx={{mb:1.5}}>
         {fileName ? `Chatting with: ${fileName}` : "No context selected"}
       </Typography>
       <Box
@@ -55,10 +56,17 @@ export default function ChatWindow() {
             }}
           >
             <Typography variant="h5" sx={{ textAlign: "center" }}>
-              Upload a document and start chatting
+              {fileName
+                ? "Context document uploaded successfully!"
+                : "Upload a document and start chatting"}
             </Typography>
+            {fileName ? null : (
+              <Box sx={{ maxWidth: "300px", my: 1 }}>
+                <ContextUpload uploadBtnName="Upload Document" />
+              </Box>
+            )}
 
-            <Typography sx={{ mt: 2 }}>Example questions:</Typography>
+            <Typography sx={{ mt: 1 }}>Example questions:</Typography>
 
             <Typography>• Summarize this document</Typography>
 

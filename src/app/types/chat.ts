@@ -12,6 +12,8 @@ export interface ChatStore {
     content: string
   ) => Promise<void>;
   clearChat: () => void;
+  summary: string;
+  setSummary: (summary: string) => void;
 }
 
 export type AgentStatus =
