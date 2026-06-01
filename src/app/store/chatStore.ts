@@ -1,13 +1,8 @@
 import { create } from "zustand";
 import { AgentStatus, ChatStore } from "../types/chat";
 
-
-
 export const useChatStore = create<ChatStore>((set) => {
-  const updateAgentStatus = (
-    index: number,
-    status: AgentStatus
-  ) => {
+  const updateAgentStatus = (index: number, status: AgentStatus) => {
     set((state) => ({
       agents: state.agents.map((agent, i) =>
         i === index
@@ -15,24 +10,17 @@ export const useChatStore = create<ChatStore>((set) => {
               ...agent,
               status,
             }
-          : agent
+          : agent,
       ),
     }));
   };
 
-  const runAgent = async (
-    index: number
-  ) => {
+  const runAgent = async (index: number) => {
     updateAgentStatus(index, "running");
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1000)
-    );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    updateAgentStatus(
-      index,
-      "completed"
-    );
+    updateAgentStatus(index, "completed");
   };
 
   return {
@@ -58,12 +46,10 @@ export const useChatStore = create<ChatStore>((set) => {
         status: "idle",
       },
     ],
+    summary: "",
 
-    sendMessage: async (
-      content: string
-    ) => {
-      const userMessageId =
-        crypto.randomUUID();
+    sendMessage: async (content: string) => {
+      const userMessageId = crypto.randomUUID();
 
       set((state) => ({
         messages: [
@@ -75,12 +61,10 @@ export const useChatStore = create<ChatStore>((set) => {
           },
         ],
 
-        agents: state.agents.map(
-          (agent) => ({
-            ...agent,
-            status: "idle",
-          })
-        ),
+        agents: state.agents.map((agent) => ({
+          ...agent,
+          status: "idle",
+        })),
 
         isLoading: true,
       }));
@@ -90,39 +74,24 @@ export const useChatStore = create<ChatStore>((set) => {
         await runAgent(1);
         await runAgent(2);
 
-        updateAgentStatus(
-          3,
-          "running"
-        );
+        updateAgentStatus(3, "running");
 
-        const context =
-          sessionStorage.getItem(
-            "context-content"
-          ) ?? "";
+        const context = sessionStorage.getItem("context-content") ?? "";
 
-        const response =
-          await fetch(
-            "/api/chat",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-              body: JSON.stringify({
-                question: content,
-                context,
-              }),
-            }
-          );
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: content,
+            context,
+          }),
+        });
 
-        const data =
-          await response.json();
+        const data = await response.json();
 
-        updateAgentStatus(
-          3,
-          "completed"
-        );
+        updateAgentStatus(3, "completed");
 
         set((state) => ({
           messages: [
@@ -130,9 +99,7 @@ export const useChatStore = create<ChatStore>((set) => {
             {
               id: crypto.randomUUID(),
               role: "assistant",
-              content:
-                data.answer ??
-                "No response generated.",
+              content: data.answer ?? "No response generated.",
             },
           ],
 
@@ -141,10 +108,7 @@ export const useChatStore = create<ChatStore>((set) => {
       } catch (error) {
         console.error(error);
 
-        updateAgentStatus(
-          3,
-          "completed"
-        );
+        updateAgentStatus(3, "completed");
 
         set((state) => ({
           messages: [
@@ -152,8 +116,7 @@ export const useChatStore = create<ChatStore>((set) => {
             {
               id: crypto.randomUUID(),
               role: "assistant",
-              content:
-                "Failed to generate response.",
+              content: "Failed to generate response.",
             },
           ],
 
@@ -162,15 +125,19 @@ export const useChatStore = create<ChatStore>((set) => {
       }
     },
     clearChat: () =>
-  set((state) => ({
-    messages: [],
+      set((state) => ({
+        messages: [],
 
-    agents: state.agents.map(
-      (agent) => ({
-        ...agent,
-        status: "idle",
-      })
-    ),
-  })),
+        agents: state.agents.map((agent) => ({
+          ...agent,
+          status: "idle",
+        })),
+        summary: "",
+      })),
+
+    setSummary: (summary) =>
+      set({
+        summary,
+      }),
   };
 });
